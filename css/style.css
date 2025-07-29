@@ -1,0 +1,206 @@
+/* ... CSS yang sudah ada sebelumnya ... */
+
+/* CSS BARU UNTUK SUMMARY BOX */
+.summary-container {
+    display: flex;
+    flex-wrap: wrap;
+    background-color: #f8f9fa;
+    padding: 20px;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.summary-left {
+    flex: 1;
+    min-width: 250px;
+    padding-right: 20px;
+    border-right: 1px solid #dee2e6;
+}
+
+.summary-right {
+    flex: 2;
+    min-width: 300px;
+    padding-left: 20px;
+}
+
+.summary-label {
+    display: block;
+    font-size: 14px;
+    color: #6c757d;
+    margin-bottom: 5px;
+}
+
+.summary-amount {
+    display: block;
+    font-size: 32px;
+    font-weight: bold;
+    color: #b30000ff;
+}
+
+.summary-title {
+    display: block;
+    font-size: 14px;
+    font-weight: bold;
+    color: #b30000ff;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+}
+
+.detail-item {
+    display: flex;
+    justify-content: space-between;
+    font-size: 15px;
+    padding: 8px 0;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.detail-item:last-child {
+    border-bottom: none;
+}
+
+.detail-item span:first-child {
+    color: #6c757d;
+}
+
+.detail-item span:last-child {
+    font-weight: bold;
+    color: #b30000ff;
+}
+
+/* CSS untuk header tabel agar sesuai gambar */
+#cs-amortization-table thead tr {
+    background-color: #f71d1dff !important; /* Warna oranye */
+    color: white;
+}
+#cs-amortization-table th {
+    padding: 12px;
+}
+
+/* Responsive untuk layar kecil */
+@media (max-width: 768px) {
+    .summary-left {
+        border-right: none;
+        border-bottom: 1px solid #dee2e6;
+        padding-right: 0;
+        padding-bottom: 20px;
+        margin-bottom: 20px;
+        width: 100%;
+    }
+    .summary-right {
+        padding-left: 0;
+        width: 100%;
+    }
+}
+
+/* --- Styling Formulir Minimalis dengan Garis Bawah --- */
+
+/* Menghapus gaya default dari wrapper */
+#cs-calculator-wrapper {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: #ffffff;
+    padding: 0;
+    border: none;
+    box-shadow: none;
+    max-width: 100%;
+    margin: 40px auto;
+}
+
+#cs-calculator-wrapper h3 {
+    display: none; /* Sembunyikan judul "Simulasi Kredit" agar lebih bersih */
+}
+
+/* Menggunakan CSS Grid untuk layout multi-kolom */
+#cs-credit-form {
+    display: grid;
+    /* Membuat 3 kolom yang sama lebarnya */
+    grid-template-columns: repeat(3, 1fr);
+    /* Jarak antar baris dan kolom */
+    gap: 35px 30px;
+}
+
+/* Menghapus margin default dari paragraf pembungkus field */
+#cs-credit-form p {
+    margin: 0;
+    position: relative;
+}
+
+/* Styling untuk Label */
+#cs-credit-form label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #6c757d; /* Warna abu-abu */
+    margin-bottom: 6px;
+}
+
+/* Styling untuk semua input dan dropdown */
+#cs-credit-form input[type="number"],
+#cs-credit-form select {
+    width: 100%;
+    padding: 8px 2px;
+    font-size: 16px;
+    color: #212529;
+
+    /* Menghilangkan semua border dan background */
+    border: none;
+    border-radius: 0;
+    background-color: transparent;
+    
+    /* Menambahkan hanya garis bawah */
+    border-bottom: 1px solid #ced4da; /* Garis abu-abu tipis */
+    
+    -webkit-appearance: none; /* Menghapus gaya default browser */
+    -moz-appearance: none;
+    appearance: none;
+    transition: border-color 0.2s ease;
+}
+
+/* Mengembalikan panah dropdown default browser */
+#cs-credit-form select {
+    -webkit-appearance: menulist;
+    -moz-appearance: menulist;
+    appearance: menulist;
+    cursor: pointer;
+}
+
+/* Efek saat input di-klik (focus) */
+#cs-credit-form input[type="number"]:focus,
+#cs-credit-form select:focus {
+    outline: none;
+    border-bottom-color: #f71d1dff; /* Warna garis bawah berubah menjadi oranye */
+}
+
+/* Mengatur posisi tombol di grid */
+#cs-credit-form p:last-of-type {
+    /* Tombol akan menempati semua kolom dari awal sampai akhir */
+    grid-column: 1 / -1;
+    text-align: center; /* Posisi tombol di tengah */
+    margin-top: 20px;
+}
+
+/* Tombol "Hitung Simulasi" */
+#cs-credit-form button[type="submit"] {
+    background-color: #f71d1dff; /* Warna oranye solid */
+    color: #ffffff;
+    border: 1px solid #f71d1dff;
+    border-radius: 6px;
+    font-size: 15px;
+    font-weight: 600;
+    padding: 12px 50px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    width: auto; /* Lebar tombol menyesuaikan konten */
+}
+
+#cs-credit-form button[type="submit"]:hover {
+    background-color: #e61a1aff; /* Warna oranye sedikit lebih gelap */
+    border-color: #e61a1aff;
+}
+
+/* CSS untuk layar mobile (di bawah 768px) */
+@media (max-width: 768px) {
+    #cs-credit-form {
+        /* Ubah layout menjadi 1 kolom */
+        grid-template-columns: 1fr;
+    }
+}
