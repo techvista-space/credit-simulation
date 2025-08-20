@@ -11,6 +11,7 @@
  * Text Domain:       cs
  */
 require_once plugin_dir_path(__FILE__) . 'admin/admin-page.php';
+require_once plugin_dir_path(__FILE__) . 'deposito-simulation.php';
 
 // Aktivasi: buat tabel untuk produk
 register_activation_hook(__FILE__, 'cs_create_table');
@@ -111,8 +112,7 @@ function cs_form_shortcode() {
         <!-- Wrapper untuk disklaimer -->
         <div id="cs-disclaimer" class="mt-4 p-3 bg-light">
             <stong>Disclaimer:</strong>
-            <p>Simulasi ini hanya untuk tujuan informasi. Hasil yang diberikan tidak mengikat dan dapat berbeda tergantung pada kebijakan bank atau lembaga keuangan.
-            Untuk informasi lebih lanjut, silakan hubungi bank atau lembaga keuangan terkait.</p>
+            <p>Simulasi ini hanya untuk tujuan informasi. Hasil yang diberikan tidak mengikat dan dapat berbeda tergantung pada kebijakan bank atau lembaga keuangan.  Untuk informasi lebih lanjut, silakan hubungi ke <span class="fw-bolder text-danger">(024) 3554444</span> atau (WA) <span class="fw-bolder text-danger">0882008708988</span>.</p>
         </div>
     </div>
     <?php

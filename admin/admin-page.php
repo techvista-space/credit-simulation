@@ -189,6 +189,11 @@ function cs_list_page() {
             ?>
         </form>
     </div>
+    <!-- DEskripsi nama shortcode -->
+    <div class="wrap">
+        <h2>Deskripsi Shortcode</h2>
+        <p>Gunakan shortcode <code>[credit_simulation]</code> untuk menampilkan kalkulator kredit di halaman atau postingan Anda.</p>
+        <p>Gunakan shortcode <code>[deposito_simulation]</code> untuk menampilkan kalkulator deposito di halaman atau postingan Anda.</p>
     <?php
 }
 
