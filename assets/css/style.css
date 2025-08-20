@@ -1,0 +1,111 @@
+/* ... CSS yang sudah ada sebelumnya ... */
+
+/* CSS BARU UNTUK SUMMARY BOX */
+.summary-container {
+    display: flex;
+    flex-wrap: wrap;
+    background-color: #f8f9fa;
+    padding: 20px;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.summary-left {
+    flex: 1;
+    min-width: 250px;
+    padding-right: 20px;
+    border-right: 1px solid #dee2e6;
+}
+
+.summary-right {
+    flex: 2;
+    min-width: 300px;
+    padding-left: 20px;
+}
+
+.summary-label {
+    display: block;
+    font-size: 14px;
+    color: #6c757d;
+    margin-bottom: 5px;
+}
+
+.summary-amount {
+    display: block;
+    font-size: 32px;
+    font-weight: bold;
+    color: #b30000ff;
+}
+
+.summary-title {
+    display: block;
+    font-size: 14px;
+    font-weight: bold;
+    color: #b30000ff;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+}
+
+.detail-item {
+    display: flex;
+    justify-content: space-between;
+    font-size: 15px;
+    padding: 8px 0;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.detail-item:last-child {
+    border-bottom: none;
+}
+
+.detail-item span:first-child {
+    color: #6c757d;
+}
+
+.detail-item span:last-child {
+    font-weight: bold;
+    color: #b30000ff;
+}
+
+/* CSS untuk header tabel agar sesuai gambar */
+#cs-amortization-table thead tr {
+    background-color: #f71d1dff !important; /* Warna oranye */
+    color: white;
+}
+#cs-amortization-table th {
+    padding: 12px;
+}
+
+/* Responsive untuk layar kecil */
+@media (max-width: 768px) {
+    .summary-left {
+        border-right: none;
+        border-bottom: 1px solid #dee2e6;
+        padding-right: 0;
+        padding-bottom: 20px;
+        margin-bottom: 20px;
+        width: 100%;
+    }
+    .summary-right {
+        padding-left: 0;
+        width: 100%;
+    }
+}
+
+/* --- Styling Formulir Minimalis dengan Garis Bawah --- */
+
+/* Menghapus gaya default dari wrapper */
+#cs-calculator-wrapper {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: #ffffff;
+    padding: 0;
+    border: none;
+    box-shadow: none;
+    max-width: 100%;
+    margin: 40px auto;
+}
+
+#cs-calculator-wrapper h3 {
+    display: none; /* Sembunyikan judul "Simulasi Kredit" agar lebih bersih */
+}

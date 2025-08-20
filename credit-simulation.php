@@ -1,76 +1,118 @@
 <?php
 /**
  * Plugin Name:       Simulasi Kredit Perusahaan
- * Plugin URI:        https://www.tecvistamedia.com/
+ * Plugin URI:        https://www.bprmaa.com/
  * Description:       Plugin untuk menampilkan formulir simulasi kredit di halaman WordPress.
  * Version:           0.1.0
- * Author:            Bagus Tasuru Nadhirin / TechVista Media Indonesia
- * Author URI:        https://www.tecvistamedia.com/
+ * Author:            Bagus Tasuru Nadhirin / BPR Mandiri Artha Abadi
+ * Author URI:        https://www.bprmaa.com/
  * License:           GPL v2 or later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain:       cs
  */
+require_once plugin_dir_path(__FILE__) . 'admin/admin-page.php';
+
+// Aktivasi: buat tabel untuk produk
+register_activation_hook(__FILE__, 'cs_create_table');
+function cs_create_table() {
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'credit_products';
+    $charset_collate = $wpdb->get_charset_collate();
+
+    $sql = "CREATE TABLE $table_name (
+        id mediumint(9) NOT NULL AUTO_INCREMENT,
+        product_name varchar(100) NOT NULL,
+        interest_rate float NOT NULL,
+        interest_type varchar(20) NOT NULL,
+        PRIMARY KEY  (id)
+    ) $charset_collate;";
+
+    require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+    dbDelta($sql);
+}
 
 /**
- * Membuat shortcode untuk menampilkan formulir.
+ * 
+ * @return bool|string
  */
 function cs_form_shortcode() {
+    global $wpdb;
+    // Ambil semua data produk dari tabel custom
+    $produk_list = $wpdb->get_results("SELECT id, product_name, interest_rate, interest_type FROM " . CREDIT_PRODUCTS_TABLE, ARRAY_A);
+
     ob_start();
     ?>
     <div id="cs-calculator-wrapper">
         <h3>Simulasi Kredit</h3>
         <form id="cs-credit-form">
-            <p>
-                <label for="jumlah_pinjaman">Jumlah Pinjaman (Rp)</label><br>
-                <input type="number" id="jumlah_pinjaman" name="jumlah_pinjaman" required>
-            </p>
-            <p>
-                <label for="suku_bunga">Suku Bunga Tahunan (%)</label><br>
-                <input type="number" step="0.1" id="suku_bunga" name="suku_bunga" required>
-            </p>
-            <p>
-                <label for="jangka_waktu">Jangka Waktu (Bulan)</label><br>
-                <input type="number" id="jangka_waktu" name="jangka_waktu" required>
-            </p>
-            
-            <p>
-                <label for="tipe_bunga">Tipe Bunga</label><br>
-                <select id="tipe_bunga" name="tipe_bunga">
-                    <option value="flat">Flat</option>
-                    <option value="efektif">Efektif</option>
-                    <option value="anuitas">Anuitas</option>
-                </select>
-            </p>
-            <p>
-                <button type="submit">Hitung Simulasi</button>
-            </p>
+            <div class="row mb-3">
+                <div class="form-group mb-3 col-md-6">
+                    <label for="jumlah_pinjaman">Jumlah Pinjaman (Rp)</label>
+                    <input type="number" class="form-control" id="jumlah_pinjaman" name="jumlah_pinjaman" required>
+                </div>
+                <div class="form-group mb-3 col-md-6">
+                    <label for="produk_kredit_pilihan">Pilih Produk</label>
+                    <select name="produk_kredit_pilihan" class="form-select my-1 mr-sm-2" id="produk_kredit_pilihan">
+                        <option value="">-- Pilih Produk --</option>
+                        <?php if (!empty($produk_list)) : ?>
+                            <?php foreach ($produk_list as $produk) : ?>
+                                <?php
+                                    // Format teks untuk option: Nama Produk (Besaran Bunga%)
+                                    $option_text = sprintf(
+                                        '%s - (%s%%) - %s',
+                                        $produk['product_name'],
+                                        number_format($produk['interest_rate'], 2, ',', ''),
+                                        $produk['interest_type'] // Menambahkan tipe bunga
+                                    );
+                                ?>
+                                <option 
+                                    value="<?php echo esc_attr($produk['id']); ?>"
+                                    data-interest-rate="<?php echo esc_attr($produk['interest_rate']); ?>"
+                                    data-interest-type="<?php echo esc_attr($produk['interest_type']); ?>"
+                                >
+                                    <?php echo esc_html($option_text); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </select>
+                </div>
+                <div class="form-group mb-3 col-md-6">
+                    <label for="interest_rate">Bunga</label>
+                    <input type="number" class="form-control bg-light" step="0.1" name="interest_rate" id="interest_rate" value="" readonly>
+                </div>
+                <div class="form-group mb-3 col-md-6">
+                    <label for="interest_type">Tipe Bunga</label>
+                    <input type="text" class="form-control bg-light" name="interest_type" id="interest_type" value="" readonly>
+                </div>
+                <div class="form-group mb-3 col-md-6">
+                    <label for="jangka_waktu">Jangka Waktu (Bulan)</label>
+                    <input type="number" class="form-control" id="jangka_waktu" name="jangka_waktu" required>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-danger">Hitung Simulasi</button>
         </form>
         
-        <!-- <div id="cs-result-wrapper" style="display:none; margin-top: 20px;">
-            <h4>Hasil Simulasi:</h4>
-            <p><strong>Total Angsuran per Bulan:</strong> <span id="cs-monthly-payment"></span></p>
-            <div id="cs-amortization-table"></div>
-        </div> -->
-
         <div id="cs-result-wrapper" style="display:none; margin-top: 20px;">
-            <div id="cs-summary-info" class="summary-container">
-                <div class="summary-left">
-                    <span class="summary-label">Angsuran Cicilan per Bulan (Rp)</span>
-                    <span id="cs-monthly-payment" class="summary-amount"></span>
+            <div id="cs-summary-info" class="row mb-3">
+                <div class="col-md-4">
+                    <p class="text-muted">Angsuran Cicilan per Bulan (Rp)</p>
+                    <p id="cs-monthly-payment" class="text-danger fs-2 text-danger fw-bolder"></p>
                 </div>
-                <div class="summary-right">
-                    <span class="summary-title">TOTAL ANGSURAN PER BULAN</span>
+                <div class="col-md-8">
+                    <p class="fw-bolder text-uppercase text-danger">Rincian</p>
                     <div id="cs-loan-details"></div>
                 </div>
             </div>
-            <div id="cs-amortization-table"></div>
+            <div class="table-responsive">
+                <div id="cs-amortization-table"></div>
+            </div>
         </div>
 
         <!-- Wrapper untuk disklaimer -->
-        <div id="cs-disclaimer" class="cs-disclaimer">
+        <div id="cs-disclaimer" class="mt-4 p-3 bg-light">
             <stong>Disclaimer:</strong>
-            <p>Simulasi ini hanya untuk tujuan informasi. Hasil yang diberikan tidak mengikat dan dapat berbeda tergantung pada kebijakan bank atau lembaga keuangan.</p>
-            <p></p>Untuk informasi lebih lanjut, silakan hubungi bank atau lembaga keuangan terkait.</p>
+            <p>Simulasi ini hanya untuk tujuan informasi. Hasil yang diberikan tidak mengikat dan dapat berbeda tergantung pada kebijakan bank atau lembaga keuangan.
+            Untuk informasi lebih lanjut, silakan hubungi bank atau lembaga keuangan terkait.</p>
         </div>
     </div>
     <?php
@@ -84,17 +126,25 @@ add_shortcode('credit_simulation', 'cs_form_shortcode');
  */
 function cs_enqueue_scripts() {
     if ( is_a( get_post( get_the_ID() ), 'WP_Post' ) && has_shortcode( get_post( get_the_ID() )->post_content, 'credit_simulation') ) {
-        
+
+        // Jika kita berada di halaman yang benar, muat CSS Bootstrap dari CDN.
         wp_enqueue_style(
-            'cs-style-css',
-            plugin_dir_url(__FILE__) . 'css/style.css',
-            array(),
-            '1.0.0'
+            'bootstrap-css', // Handle unik untuk stylesheet
+            'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css', // URL ke file CSS
+            [], // Tidak ada dependensi
+            '5.3.2' // Versi
         );
+        
+        // wp_enqueue_style(
+        //     'cs-style-css',
+        //     plugin_dir_url(__FILE__) . 'assets/css/style.css',
+        //     array(),
+        //     '1.0.0'
+        // );
 
         wp_enqueue_script(
             'cs-calculator-js',
-            plugin_dir_url(__FILE__) . 'js/calculator.js',
+            plugin_dir_url(__FILE__) . 'assets/js/calculator.js',
             array('jquery'),
             '1.0.0',
             true
@@ -108,6 +158,7 @@ function cs_enqueue_scripts() {
 }
 add_action('wp_enqueue_scripts', 'cs_enqueue_scripts');
 
+
 /**
  * Menangani kalkulasi via AJAX.
  */
@@ -116,9 +167,9 @@ function cs_calculate_credit_ajax_handler() {
 
     // Ambil semua input
     $p = isset($_POST['jumlah_pinjaman']) ? floatval($_POST['jumlah_pinjaman']) : 0;
-    $rate_tahunan = isset($_POST['suku_bunga']) ? floatval($_POST['suku_bunga']) : 0;
+    $rate_tahunan = isset($_POST['interest_rate']) ? floatval($_POST['interest_rate']) : 0;
     $n = isset($_POST['jangka_waktu']) ? intval($_POST['jangka_waktu']) : 0;
-    $tipe_bunga = isset($_POST['tipe_bunga']) ? sanitize_text_field($_POST['tipe_bunga']) : 'flat';
+    $interest_type = isset($_POST['interest_type']) ? sanitize_text_field($_POST['interest_type']) : 'flat';
 
     if ($p <= 0 || $rate_tahunan <= 0 || $n <= 0) {
         wp_send_json_error(['message' => 'Semua field harus diisi dengan angka yang valid.']);
@@ -130,9 +181,8 @@ function cs_calculate_credit_ajax_handler() {
     $sisa_pinjaman = $p;
     $angsuran_bulanan_text = '';
 
-    // ... (Logika switch case untuk 'flat', 'efektif', 'anuitas' tetap sama) ...
-    // ... (Tidak perlu diubah) ...
-    switch ($tipe_bunga) {
+    // Logika perhitungan berdasarkan jenis bunga
+    switch ($interest_type) {
         
         case 'flat':
             $angsuran_pokok_flat = $p / $n;
@@ -201,12 +251,12 @@ function cs_calculate_credit_ajax_handler() {
         'info_pinjaman'    => [
             'nominal' => 'Rp ' . number_format($p, 0, ',', '.'),
             'jangka_waktu' => $n . ' Bulan',
-            'suku_bunga' => $rate_tahunan . '%',
-            'tipe_bunga' => ucfirst($tipe_bunga) // Mengubah 'flat' menjadi 'Flat'
+            'interest_rate' => $rate_tahunan . '%',
+            'interest_type' => ucfirst($interest_type) // Mengubah 'flat' menjadi 'Flat'
         ]
     ];
     wp_send_json_success($response_data);
 }
-// Hook tetap sama
+// Menangani permintaan AJAX untuk kalkulasi kredit
 add_action('wp_ajax_cs_calculate_credit', 'cs_calculate_credit_ajax_handler');
 add_action('wp_ajax_nopriv_cs_calculate_credit', 'cs_calculate_credit_ajax_handler');
